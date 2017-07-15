@@ -101,6 +101,7 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
+<<<<<<< HEAD
     standings = playerStandings()
     matches = [row[3] for row in standings]
     pairings = []
@@ -140,3 +141,45 @@ def check_rematch(id1, id2):
         return True
     else:
         return False
+||||||| merged common ancestors
+
+
+=======
+    standings = playerStandings()
+    matches = [row[3] for row in standings]
+    pairings = []
+    pairings = generatepairings(standings, pairings)
+    return pairings
+
+
+def generatepairings(standings, pairings):
+    for i in range(0, len(standings), 2):
+        for j in range(i+1, len(standings)):
+            is_rematch = check_rematch(standings[i][0], standings[j][0])
+            if is_rematch:
+                continue
+            else:
+                while j > i+1:
+                    temp = standings[j-1]
+                    standings[j-1] = standings[j]
+                    standings[j] = temp
+                    j = j-1
+                break
+        pairings.append((standings[i][0], standings[i][1], standings[j][0],
+                        standings[j][1]))
+    return pairings
+
+
+def check_rematch(id1, id2):
+    db = connect()
+    conn = db.cursor()
+    conn.execute("SELECT count(*) from matches where winner=%s AND loser=%s OR"
+                 " winner=%s AND loser=%s", (id1, id2, id2, id1, ))
+    count = conn.fetchone()[0]
+    db.commit()
+    db.close()
+    if count > 0:
+        return True
+    else:
+        return False
+>>>>>>> cf4c6f2aa31f4955e2a95e6786c61be965e3c848
